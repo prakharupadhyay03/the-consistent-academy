@@ -29,3 +29,7 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Local audit and temporary artifacts
+audit/
+scratch/
