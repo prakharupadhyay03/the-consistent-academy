@@ -1,0 +1,496 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-ivory: #F6F0E7;
+  --color-white: #FFFFFF;
+  --color-aubergine: #35213B;
+  --color-purple: #9636F5;
+  --color-mauve: #E9DDEB;
+  --color-gold: #C5A16A;
+  --color-charcoal: #403744;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color: #403744;
+    background-color: #F6F0E7;
+    font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background-color: #F6F0E7;
+    color: #403744;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Accessible Focus States */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #9636F5;
+    outline-offset: 2px;
+  }
+
+  /* Distinctive Modern Educational Headings - Plus Jakarta Sans */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #35213B;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+
+  /* Modern Educational Buttons with Plus Jakarta Sans & Restrained Motion */
+  .btn-primary {
+    font-family: var(--font-heading);
+    @apply inline-flex items-center justify-center font-semibold text-white bg-brand-purple px-5 py-2.5 rounded-lg shadow-sm transition-all duration-[200ms] ease-out hover:bg-[#8124DE] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    font-family: var(--font-heading);
+    @apply inline-flex items-center justify-center font-semibold text-brand-aubergine bg-brand-mauve hover:bg-brand-mauve-border border border-brand-mauve-border px-5 py-2.5 rounded-lg transition-all duration-[200ms] ease-out hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    font-family: var(--font-heading);
+    @apply inline-flex items-center justify-center font-semibold text-brand-charcoal hover:text-brand-aubergine bg-white hover:bg-brand-mauve/40 border border-brand-border hover:border-brand-purple/30 px-5 py-2.5 rounded-lg transition-all duration-[200ms] ease-out hover:-translate-y-0.5 hover:shadow-subtle active:translate-y-0 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-subtle;
+  }
+
+  .btn-aubergine {
+    font-family: var(--font-heading);
+    @apply inline-flex items-center justify-center font-semibold text-white bg-brand-aubergine hover:bg-brand-aubergine-light px-5 py-2.5 rounded-lg transition-all duration-[200ms] ease-out hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm;
+  }
+
+  /* Editorial Content Surfaces & Cards */
+  .content-surface {
+    @apply bg-white border border-brand-border rounded-xl shadow-subtle;
+  }
+
+  .card-hoverable {
+    @apply transition-all duration-normal hover:border-brand-purple/40 hover:shadow-card-hover;
+  }
+
+  /* Restrained Decorative Accents */
+  .gold-rule {
+    @apply h-[2px] w-8 rounded-full bg-brand-gold my-4;
+  }
+
+  .badge-gold {
+    @apply inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-md bg-brand-gold-light text-[#8A6732] border border-brand-gold-border;
+  }
+
+  .badge-aubergine {
+    @apply inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-md bg-brand-aubergine text-white;
+  }
+
+  .badge-mauve {
+    @apply inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-md bg-brand-mauve text-brand-aubergine border border-brand-mauve-border;
+  }
+}
+
+/* Anchor Navigation Scroll Offset */
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Restrained Hero Entrance Animations (400-700ms duration, staggered intervals) */
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes heroFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate-label {
+  animation: heroFadeIn 450ms ease-out 0ms both;
+}
+
+.hero-animate-headline {
+  animation: heroFadeInUp 550ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both;
+}
+
+.hero-animate-paragraph {
+  animation: heroFadeInUp 550ms cubic-bezier(0.16, 1, 0.3, 1) 220ms both;
+}
+
+.hero-animate-cta {
+  animation: heroFadeInUp 550ms cubic-bezier(0.16, 1, 0.3, 1) 340ms both;
+}
+
+.hero-animate-proof-1 {
+  animation: heroFadeInUp 500ms cubic-bezier(0.16, 1, 0.3, 1) 460ms both;
+}
+
+.hero-animate-proof-2 {
+  animation: heroFadeInUp 500ms cubic-bezier(0.16, 1, 0.3, 1) 540ms both;
+}
+
+.hero-animate-proof-3 {
+  animation: heroFadeInUp 500ms cubic-bezier(0.16, 1, 0.3, 1) 620ms both;
+}
+
+.hero-animate-founder {
+  animation: heroFadeInUp 600ms cubic-bezier(0.16, 1, 0.3, 1) 220ms both;
+}
+
+.hero-animate-ledger {
+  animation: heroFadeInUp 550ms cubic-bezier(0.16, 1, 0.3, 1) 500ms both;
+}
+
+/* ==========================================================================
+   Cinematic Background Slideshow (Homepage Hero)
+   ========================================================================== */
+
+.hero-slide-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1600ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.hero-slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  transform: scale(1);
+  transition: transform 1400ms ease-out;
+}
+
+.hero-slide-zoom {
+  animation: heroCinematicZoom 8000ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.hero-slide-paused {
+  animation-play-state: paused !important;
+}
+
+@keyframes heroCinematicZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.045);
+  }
+}
+
+/* Seamless, High-Contrast Warm Ivory Gradient Overlay */
+.hero-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(246, 240, 231, 0.98) 0%,
+    rgba(246, 240, 231, 0.96) 42%,
+    rgba(246, 240, 231, 0.91) 58%,
+    rgba(246, 240, 231, 0.65) 75%,
+    rgba(246, 240, 231, 0.18) 100%
+  );
+}
+
+@media (max-width: 1023px) {
+  .hero-gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(246, 240, 231, 0.98) 0%,
+      rgba(246, 240, 231, 0.96) 52%,
+      rgba(246, 240, 231, 0.86) 75%,
+      rgba(246, 240, 231, 0.40) 100%
+    );
+  }
+}
+
+.hero-vignette-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5rem;
+  background: linear-gradient(180deg, #F6F0E7 0%, rgba(246, 240, 231, 0) 100%);
+  pointer-events: none;
+}
+
+.hero-vignette-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  background: linear-gradient(0deg, #F6F0E7 0%, rgba(246, 240, 231, 0) 100%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Founder Profile Card Hover Interactions (PART A)
+   ========================================================================== */
+
+.founder-card {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid rgba(229, 220, 210, 0.85);
+  box-shadow: 0 4px 8px -2px rgba(53, 33, 59, 0.05), 0 2px 4px -2px rgba(53, 33, 59, 0.04);
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .founder-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px -8px rgba(53, 33, 59, 0.12), 0 6px 12px -3px rgba(53, 33, 59, 0.06);
+    border-color: rgba(150, 54, 245, 0.35);
+  }
+
+  .founder-card:hover .founder-portrait-img {
+    transform: scale(1.04);
+  }
+}
+
+.founder-portrait-img-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f5f5f4;
+}
+
+.founder-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transform: scale(1);
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* Lightweight Scroll-Reveal for Homepage Sections */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-section.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* General Fade-in-up fallback */
+.animate-fade-in-up {
+  animation: heroFadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Micro Interactions */
+.link-arrow {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+}
+
+.group:hover .link-arrow {
+  transform: translateX(3px);
+}
+
+/* Carousel Scrollbar Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Reduced Motion Respect — Disable movement and display immediately */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-section {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero-animate-label,
+  .hero-animate-headline,
+  .hero-animate-paragraph,
+  .hero-animate-cta,
+  .hero-animate-proof-1,
+  .hero-animate-proof-2,
+  .hero-animate-proof-3,
+  .hero-animate-founder,
+  .hero-animate-ledger {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-slide-wrapper {
+    transition: none !important;
+  }
+
+  .hero-slide-img {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero-slide-zoom {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .founder-card {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .founder-card:hover {
+    transform: none !important;
+  }
+
+  .founder-portrait-img {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .founder-card:hover .founder-portrait-img {
+    transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   Interactive Leaflet Map Branded Styles
+   ========================================================================== */
+.leaflet-container {
+  font-family: inherit !important;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid #E8DFD5 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 6px rgba(38, 19, 45, 0.08) !important;
+  margin-top: 14px !important;
+  margin-right: 14px !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: #FFFFFF !important;
+  color: #26132D !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 16px !important;
+  transition: all 0.15s ease !important;
+  border-bottom: 1px solid #F1E5D8 !important;
+}
+
+@media (min-width: 640px) {
+  .leaflet-control-zoom a {
+    width: 34px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+  }
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom: none !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #FAF6F0 !important;
+  color: #9636F5 !important;
+}
+
+.tca-custom-popup .leaflet-popup-content-wrapper {
+  background: #FFFFFF;
+  border-radius: 14px;
+  border: 1px solid #E8DFD5;
+  box-shadow: 0 12px 28px -4px rgba(38, 19, 45, 0.16), 0 4px 12px rgba(38, 19, 45, 0.06);
+  padding: 4px;
+}
+
+.tca-custom-popup .leaflet-popup-tip {
+  background: #FFFFFF;
+  border: 1px solid #E8DFD5;
+  box-shadow: none;
+}
+
+.tca-custom-popup .leaflet-popup-content {
+  margin: 10px 14px 12px 14px !important;
+  line-height: 1.4;
+}
+
+.tca-custom-popup .leaflet-popup-close-button {
+  top: 10px !important;
+  right: 10px !important;
+  color: #8C7B90 !important;
+  font-size: 16px !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease !important;
+}
+
+.tca-custom-popup .leaflet-popup-close-button:hover {
+  color: #26132D !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(4px) !important;
+  font-size: 10px !important;
+  color: #6E5E73 !important;
+  border-top-left-radius: 6px !important;
+  padding: 2px 8px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #9636F5 !important;
+  text-decoration: none !important;
+}
+

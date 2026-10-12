@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Consistent Academy — Image Audit Contact Sheet</title>
+  <style>
+    :root {
+      --bg: #0F172A;
+      --card-bg: #1E293B;
+      --card-border: #334155;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --primary: #8B5CF6;
+      --accent: #06B6D4;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem 1.5rem;
+      line-height: 1.5;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.5rem;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #A78BFA, #38BDF8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .header p { color: var(--text-muted); font-size: 0.95rem; }
+    
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    .stat-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .stat-pill strong { color: var(--text); font-weight: 700; }
+
+    .controls {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .search-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      min-width: 250px;
+      outline: none;
+    }
+    .search-box:focus { border-color: var(--primary); }
+
+    .grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+      border-color: #475569;
+    }
+    .img-wrapper {
+      position: relative;
+      background: #090D16;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+    .img-wrapper img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s;
+    }
+    .img-wrapper:hover img {
+      transform: scale(1.03);
+    }
+    .badge-bar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-png { background: #1D4ED8; color: #DBEAFE; }
+    .badge-jpeg { background: #D97706; color: #FEF3C7; }
+    .badge-webp { background: #7C3AED; color: #EDE9FE; }
+    .badge-avif { background: #059669; color: #D1FAE5; }
+    .badge-mismatch { background: #DC2626; color: #FEE2E2; }
+    .badge-verified {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(16, 185, 129, 0.9);
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0.6rem;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .meta-list {
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      color: #CBD5E1;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .meta-label { color: var(--text-muted); }
+    .meta-val { font-weight: 500; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FCD34D;
+      padding: 0.45rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      line-height: 1.3;
+      margin-top: 0.4rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .modal-img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+    .modal-caption {
+      color: #fff;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>The Consistent Academy — Image Audit Contact Sheet</h1>
+    <p>Visual verification gallery for all downloaded and verified image assets from <strong>https://www.theconsistentacademy.in/</strong>.</p>
+    
+    <div class="stats-bar">
+      <div class="stat-pill">Total Audited: <strong>55</strong></div>
+      <div class="stat-pill">Downloaded & Verified: <strong style="color: var(--success);">53</strong></div>
+      <div class="stat-pill">Non-Existent Fallbacks: <strong style="color: var(--danger);">2</strong></div>
+      <div class="stat-pill">Format Mismatches: <strong style="color: var(--warning);">17</strong></div>
+      <div class="stat-pill">PNG: <strong>26</strong></div>
+      <div class="stat-pill">JPEG: <strong>18</strong></div>
+      <div class="stat-pill">WebP: <strong>7</strong></div>
+      <div class="stat-pill">AVIF: <strong>2</strong></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="filters">
+      <button class="filter-btn active" data-cat="all">All (53)</button>
+      <button class="filter-btn" data-cat="branding">Branding (3)</button>
+      <button class="filter-btn" data-cat="books">Books (3)</button>
+      <button class="filter-btn" data-cat="courses">Courses (14)</button>
+      <button class="filter-btn" data-cat="gallery">Action Gallery (23)</button>
+      <button class="filter-btn" data-cat="leadership">Leadership Badges (10)</button>
+      <button class="filter-btn" data-cat="mismatch" style="border-color: var(--warning); color: #FCD34D;">Format Mismatches (17)</button>
+    </div>
+    <input type="text" id="search" class="search-box" placeholder="Search by name, path, or format...">
+  </div>
+
+  <div class="grid" id="image-grid">
+    
+      <div class="card" data-category="branding" data-mismatch="false" data-text="logo.png header & footer logo png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/logo.png', 'Header & Footer Logo (490 x 490, PNG)')">
+          <img src="downloaded_images/logo.png" alt="Header & Footer Logo" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Header & Footer Logo</div>
+          <div class="card-desc">Official primary logo of The Consistent Academy</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">logo.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">490 x 490</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">252.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">Global (All Pages)</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Internal Brand Asset (TCA Owned)</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="branding" data-mismatch="false" data-text="logo2.png favicon, preloader & emblem png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/logo2.png', 'Favicon, Preloader & Emblem (1024 x 1024, PNG)')">
+          <img src="downloaded_images/logo2.png" alt="Favicon, Preloader & Emblem" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Favicon, Preloader & Emblem</div>
+          <div class="card-desc">Circular high-res badge used in preloader, favicon, and CC Club</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">logo2.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1024 x 1024</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">629.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">Global, /club</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Internal Brand Asset (TCA Owned)</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="branding" data-mismatch="false" data-text="developers.png developer credits badge png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/developers.png', 'Developer Credits Badge (4080 x 3060, PNG)')">
+          <img src="downloaded_images/developers.png" alt="Developer Credits Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Developer Credits Badge</div>
+          <div class="card-desc">Hover attribution photo for developers Nakul Bhadade & Siddhi Dhoke</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">developers.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">4080 x 3060</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">460.0 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">Global /</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Attribution Asset (Nakul Bhadade & Siddhi Dhoke)</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="books" data-mismatch="false" data-text="books/cakewalk-ielts.jpg cakewalk ielts jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/books/cakewalk-ielts.jpg', 'Cakewalk IELTS (576 x 792, JPEG)')">
+          <img src="downloaded_images/books/cakewalk-ielts.jpg" alt="Cakewalk IELTS" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Cakewalk IELTS</div>
+          <div class="card-desc">Book cover authored by Vidya Wankhade</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">books/cakewalk-ielts.jpg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">576 x 792</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">50.0 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Proprietary Book Cover (Vidya Wankhade / Evincepub)</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="books" data-mismatch="false" data-text="books/the-reading-detective.jpg the reading detective jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/books/the-reading-detective.jpg', 'The Reading Detective (1059 x 1500, JPEG)')">
+          <img src="downloaded_images/books/the-reading-detective.jpg" alt="The Reading Detective" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">The Reading Detective</div>
+          <div class="card-desc">Children comprehension mysteries book cover</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">books/the-reading-detective.jpg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1059 x 1500</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">196.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Proprietary Book Cover (Vidya Wankhade / Evincepub)</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="books" data-mismatch="false" data-text="books/101-management.jpg 101 management books jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/books/101-management.jpg', '101 Management Books (989 x 1500, JPEG)')">
+          <img src="downloaded_images/books/101-management.jpg" alt="101 Management Books" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">101 Management Books</div>
+          <div class="card-desc">Management literature compilation book cover</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">books/101-management.jpg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">989 x 1500</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">104.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Proprietary Book Cover (Vidya Wankhade / Evincepub)</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/vidya.png founder portrait (vidya wankhade) png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/vidya.png', 'Founder Portrait (Vidya Wankhade) (800 x 800, PNG)')">
+          <img src="downloaded_images/gallery/vidya.png" alt="Founder Portrait (Vidya Wankhade)" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Founder Portrait (Vidya Wankhade)</div>
+          <div class="card-desc">Professional portrait of founder in Meet the Founder section</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/vidya.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">800 x 800</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">599.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Founder Personal Portrait</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v1.png action gallery photo 1 png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v1.png', 'Action Gallery Photo 1 (543 x 365, PNG)')">
+          <img src="downloaded_images/gallery/v1.png" alt="Action Gallery Photo 1" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 1</div>
+          <div class="card-desc">Student mentoring session</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v1.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">543 x 365</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">263.1 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v2.png action gallery photo 2 png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v2.png', 'Action Gallery Photo 2 (576 x 716, PNG)')">
+          <img src="downloaded_images/gallery/v2.png" alt="Action Gallery Photo 2" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 2</div>
+          <div class="card-desc">Classroom group lecture</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v2.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">576 x 716</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">627.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v3.png action gallery photo 3 png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v3.png', 'Action Gallery Photo 3 (869 x 608, PNG)')">
+          <img src="downloaded_images/gallery/v3.png" alt="Action Gallery Photo 3" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 3</div>
+          <div class="card-desc">Interactive workshop presentation</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v3.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">869 x 608</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">662.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v4.png action gallery photo 4 png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v4.png', 'Action Gallery Photo 4 (742 x 581, PNG)')">
+          <img src="downloaded_images/gallery/v4.png" alt="Action Gallery Photo 4" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 4</div>
+          <div class="card-desc">Student presentation training</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v4.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">742 x 581</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">714.8 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v5.png action gallery photo 5 png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v5.png', 'Action Gallery Photo 5 (522 x 421, PNG)')">
+          <img src="downloaded_images/gallery/v5.png" alt="Action Gallery Photo 5" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 5</div>
+          <div class="card-desc">Public speaking demonstration</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v5.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">522 x 421</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">335.7 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v6.png action gallery photo 6 png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v6.png', 'Action Gallery Photo 6 (722 x 631, PNG)')">
+          <img src="downloaded_images/gallery/v6.png" alt="Action Gallery Photo 6" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 6</div>
+          <div class="card-desc">One-on-one coaching feedback</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v6.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">722 x 631</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">604.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v7.jpeg action gallery photo 7 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v7.jpeg', 'Action Gallery Photo 7 (1296 x 864, JPEG)')">
+          <img src="downloaded_images/gallery/v7.jpeg" alt="Action Gallery Photo 7" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 7</div>
+          <div class="card-desc">Group workshop interactive exercise</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v7.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1296 x 864</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">129.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v8.jpeg action gallery photo 8 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v8.jpeg', 'Action Gallery Photo 8 (1200 x 1600, JPEG)')">
+          <img src="downloaded_images/gallery/v8.jpeg" alt="Action Gallery Photo 8" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 8</div>
+          <div class="card-desc">Award ceremony / recognition</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v8.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1200 x 1600</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">109.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v9.jpeg action gallery photo 9 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v9.jpeg', 'Action Gallery Photo 9 (1600 x 1600, JPEG)')">
+          <img src="downloaded_images/gallery/v9.jpeg" alt="Action Gallery Photo 9" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 9</div>
+          <div class="card-desc">Student certificate presentation</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v9.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1600 x 1600</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">195.0 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v10.jpeg action gallery photo 10 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v10.jpeg', 'Action Gallery Photo 10 (1536 x 1536, JPEG)')">
+          <img src="downloaded_images/gallery/v10.jpeg" alt="Action Gallery Photo 10" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 10</div>
+          <div class="card-desc">Outdoor / campus training session</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v10.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1536 x 1536</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">177.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v11.jpeg action gallery photo 11 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v11.jpeg', 'Action Gallery Photo 11 (1024 x 768, JPEG)')">
+          <img src="downloaded_images/gallery/v11.jpeg" alt="Action Gallery Photo 11" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 11</div>
+          <div class="card-desc">Seminar hall audience address</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v11.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1024 x 768</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">123.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v12.jpeg action gallery photo 12 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v12.jpeg', 'Action Gallery Photo 12 (1600 x 900, JPEG)')">
+          <img src="downloaded_images/gallery/v12.jpeg" alt="Action Gallery Photo 12" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 12</div>
+          <div class="card-desc">College seminar keynote</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v12.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1600 x 900</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">195.7 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v13.jpeg action gallery photo 13 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v13.jpeg', 'Action Gallery Photo 13 (1600 x 920, JPEG)')">
+          <img src="downloaded_images/gallery/v13.jpeg" alt="Action Gallery Photo 13" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 13</div>
+          <div class="card-desc">Student debate & elocution</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v13.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1600 x 920</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">253.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v14.jpeg action gallery photo 14 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v14.jpeg', 'Action Gallery Photo 14 (1280 x 960, JPEG)')">
+          <img src="downloaded_images/gallery/v14.jpeg" alt="Action Gallery Photo 14" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 14</div>
+          <div class="card-desc">Language lab practice</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v14.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1280 x 960</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">138.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v15.jpeg action gallery photo 15 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v15.jpeg', 'Action Gallery Photo 15 (1600 x 1200, JPEG)')">
+          <img src="downloaded_images/gallery/v15.jpeg" alt="Action Gallery Photo 15" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 15</div>
+          <div class="card-desc">Institutional training cohort</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v15.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1600 x 1200</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">216.8 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v16.jpeg action gallery photo 16 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v16.jpeg', 'Action Gallery Photo 16 (4032 x 3024, JPEG)')">
+          <img src="downloaded_images/gallery/v16.jpeg" alt="Action Gallery Photo 16" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 16</div>
+          <div class="card-desc">High-res group convocation photo</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v16.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">4032 x 3024</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">1.28 MB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v17.jpeg action gallery photo 17 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v17.jpeg', 'Action Gallery Photo 17 (984 x 1600, JPEG)')">
+          <img src="downloaded_images/gallery/v17.jpeg" alt="Action Gallery Photo 17" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 17</div>
+          <div class="card-desc">Student celebration milestone</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v17.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">984 x 1600</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">89.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v18.jpeg action gallery photo 18 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v18.jpeg', 'Action Gallery Photo 18 (1240 x 716, JPEG)')">
+          <img src="downloaded_images/gallery/v18.jpeg" alt="Action Gallery Photo 18" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 18</div>
+          <div class="card-desc">Group classroom discussion</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v18.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1240 x 716</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">105.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v19.jpeg action gallery photo 19 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v19.jpeg', 'Action Gallery Photo 19 (1364 x 766, JPEG)')">
+          <img src="downloaded_images/gallery/v19.jpeg" alt="Action Gallery Photo 19" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 19</div>
+          <div class="card-desc">Stage speech delivery</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v19.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1364 x 766</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">155.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v20.jpeg action gallery photo 20 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v20.jpeg', 'Action Gallery Photo 20 (1208 x 708, JPEG)')">
+          <img src="downloaded_images/gallery/v20.jpeg" alt="Action Gallery Photo 20" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 20</div>
+          <div class="card-desc">Interactive workshop group pose</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v20.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1208 x 708</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">258.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v21.jpeg action gallery photo 21 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v21.jpeg', 'Action Gallery Photo 21 (1228 x 716, JPEG)')">
+          <img src="downloaded_images/gallery/v21.jpeg" alt="Action Gallery Photo 21" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 21</div>
+          <div class="card-desc">Student presentation showcase</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v21.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1228 x 716</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">288.1 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="gallery" data-mismatch="false" data-text="gallery/v22.jpeg action gallery photo 22 jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/gallery/v22.jpeg', 'Action Gallery Photo 22 (1236 x 720, JPEG)')">
+          <img src="downloaded_images/gallery/v22.jpeg" alt="Action Gallery Photo 22" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Action Gallery Photo 22</div>
+          <div class="card-desc">Classroom training interaction</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">gallery/v22.jpeg</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1236 x 720</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">375.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Workshop Photography</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img1.png ielts / toefl / pte preparation webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img1.png', 'IELTS / TOEFL / PTE Preparation (1000 x 667, WEBP)')">
+          <img src="downloaded_images/courses/img1.png" alt="IELTS / TOEFL / PTE Preparation" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">IELTS / TOEFL / PTE Preparation</div>
+          <div class="card-desc">Adult Course 1: Global English Proficiency Program</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img1.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1000 x 667</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">48.8 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img2.png corporate survival & success jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img2.png', 'Corporate Survival & Success (640 x 360, JPEG)')">
+          <img src="downloaded_images/courses/img2.png" alt="Corporate Survival & Success" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Corporate Survival & Success</div>
+          <div class="card-desc">Adult Course 2: Fresher-focused workplace skills</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img2.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">640 x 360</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">67.7 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img3.png crack your interview jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img3.png', 'Crack Your Interview (1325 x 884, JPEG)')">
+          <img src="downloaded_images/courses/img3.png" alt="Crack Your Interview" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Crack Your Interview</div>
+          <div class="card-desc">Adult Course 3: HR interview and STAR framework</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img3.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1325 x 884</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">143.7 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img4.png corporate dining & social etiquette avif">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img4.png', 'Corporate Dining & Social Etiquette (500 x 333, AVIF)')">
+          <img src="downloaded_images/courses/img4.png" alt="Corporate Dining & Social Etiquette" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-avif">AVIF</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Corporate Dining & Social Etiquette</div>
+          <div class="card-desc">Adult Course 4: Table manners and networking</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>AVIF</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img4.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">500 x 333</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">41.9 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img5.png advanced english & leadership for managers webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img5.png', 'Advanced English & Leadership for Managers (1000 x 626, WEBP)')">
+          <img src="downloaded_images/courses/img5.png" alt="Advanced English & Leadership for Managers" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Advanced English & Leadership for Managers</div>
+          <div class="card-desc">Adult Course 5: Executive communication</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img5.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1000 x 626</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">74.5 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img6.png communication skill training avif">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img6.png', 'Communication Skill Training (740 x 493, AVIF)')">
+          <img src="downloaded_images/courses/img6.png" alt="Communication Skill Training" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-avif">AVIF</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Communication Skill Training</div>
+          <div class="card-desc">Adult Course 6: Articulation, fluency, enunciation</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>AVIF</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img6.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">740 x 493</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">12.9 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img7.png personality development training webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img7.png', 'Personality Development Training (2000 x 927, WEBP)')">
+          <img src="downloaded_images/courses/img7.png" alt="Personality Development Training" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Personality Development Training</div>
+          <div class="card-desc">Adult Course 7: Body language, dress, negotiation</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img7.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">2000 x 927</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">109.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/, /courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img8.png elocution course (kids) jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img8.png', 'Elocution Course (Kids) (810 x 471, JPEG)')">
+          <img src="downloaded_images/courses/img8.png" alt="Elocution Course (Kids)" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Elocution Course (Kids)</div>
+          <div class="card-desc">Kids Course 1: Speech clarity and pronunciation</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img8.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">810 x 471</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">31.0 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="false" data-text="courses/img9.png tedx & toastmaster training (kids) png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img9.png', 'TedX & Toastmaster Training (Kids) (1232 x 624, PNG)')">
+          <img src="downloaded_images/courses/img9.png" alt="TedX & Toastmaster Training (Kids)" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">TedX & Toastmaster Training (Kids)</div>
+          <div class="card-desc">Kids Course 2: Stage presence and confidence</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img9.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1232 x 624</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">689.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img10.png grammar foundations (kids) jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img10.png', 'Grammar Foundations (Kids) (1697 x 1131, JPEG)')">
+          <img src="downloaded_images/courses/img10.png" alt="Grammar Foundations (Kids)" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Grammar Foundations (Kids)</div>
+          <div class="card-desc">Kids Course 3: Sentence structure and parts of speech</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img10.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1697 x 1131</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">1.51 MB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img11.png creative writing (kids) jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img11.png', 'Creative Writing (Kids) (612 x 408, JPEG)')">
+          <img src="downloaded_images/courses/img11.png" alt="Creative Writing (Kids)" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Creative Writing (Kids)</div>
+          <div class="card-desc">Kids Course 4: Story generation and character creation</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img11.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">612 x 408</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">26.6 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="false" data-text="courses/img12.png reading club (kids) png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img12.png', 'Reading Club (Kids) (1200 x 630, PNG)')">
+          <img src="downloaded_images/courses/img12.png" alt="Reading Club (Kids)" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Reading Club (Kids)</div>
+          <div class="card-desc">Kids Course 5: Reading for pleasure and vocabulary</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img12.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1200 x 630</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">1.44 MB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img13.png reserve course banner jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img13.png', 'Reserve Course Banner (1400 x 653, JPEG)')">
+          <img src="downloaded_images/courses/img13.png" alt="Reserve Course Banner" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Reserve Course Banner</div>
+          <div class="card-desc">Unlinked static course banner on server</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img13.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1400 x 653</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">78.5 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">Static Reserve</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="courses" data-mismatch="true" data-text="courses/img14.png eelta teacher training approach webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/courses/img14.png', 'EELTA Teacher Training Approach (3865 x 2576, WEBP)')">
+          <img src="downloaded_images/courses/img14.png" alt="EELTA Teacher Training Approach" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">EELTA Teacher Training Approach</div>
+          <div class="card-desc">Educator Course: Experiential English teaching</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">courses/img14.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">3865 x 2576</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">277.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/courses</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Academy Course Marketing Creative</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="true" data-text="leadership/autocratic.png autocratic leadership badge webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/autocratic.png', 'Autocratic Leadership Badge (484 x 600, WEBP)')">
+          <img src="downloaded_images/leadership/autocratic.png" alt="Autocratic Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Autocratic Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/autocratic.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">484 x 600</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">21.9 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="false" data-text="leadership/bureaucratic.png bureaucratic leadership badge png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/bureaucratic.png', 'Bureaucratic Leadership Badge (1300 x 1292, PNG)')">
+          <img src="downloaded_images/leadership/bureaucratic.png" alt="Bureaucratic Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Bureaucratic Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/bureaucratic.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1300 x 1292</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">725.9 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="false" data-text="leadership/coaching.png coaching leadership badge png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/coaching.png', 'Coaching Leadership Badge (649 x 649, PNG)')">
+          <img src="downloaded_images/leadership/coaching.png" alt="Coaching Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Coaching Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/coaching.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">649 x 649</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">53.9 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="false" data-text="leadership/democratic.png democratic leadership badge png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/democratic.png', 'Democratic Leadership Badge (1619 x 1080, PNG)')">
+          <img src="downloaded_images/leadership/democratic.png" alt="Democratic Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Democratic Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/democratic.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1619 x 1080</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">490.1 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="false" data-text="leadership/laissez.png laissez-faire leadership badge png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/laissez.png', 'Laissez-Faire Leadership Badge (1813 x 1020, PNG)')">
+          <img src="downloaded_images/leadership/laissez.png" alt="Laissez-Faire Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Laissez-Faire Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/laissez.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1813 x 1020</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">520.7 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="true" data-text="leadership/servant.png servant leadership badge webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/servant.png', 'Servant Leadership Badge (1050 x 546, WEBP)')">
+          <img src="downloaded_images/leadership/servant.png" alt="Servant Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Servant Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/servant.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1050 x 546</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">40.2 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="true" data-text="leadership/situational.png situational leadership badge webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/situational.png', 'Situational Leadership Badge (600 x 480, WEBP)')">
+          <img src="downloaded_images/leadership/situational.png" alt="Situational Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Situational Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/situational.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">600 x 480</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">28.4 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="true" data-text="leadership/transactional.png transactional leadership badge jpeg">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/transactional.png', 'Transactional Leadership Badge (700 x 468, JPEG)')">
+          <img src="downloaded_images/leadership/transactional.png" alt="Transactional Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-jpeg">JPEG</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Transactional Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>JPEG</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/transactional.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">700 x 468</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">69.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="true" data-text="leadership/transformational.png transformational leadership badge webp">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/transformational.png', 'Transformational Leadership Badge (870 x 580, WEBP)')">
+          <img src="downloaded_images/leadership/transformational.png" alt="Transformational Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-webp">WEBP</span>
+            <span class="badge badge-mismatch">Saved as .png</span>
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Transformational Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+            <div class="warning-box">
+              ⚠️ <strong>Extension Mismatch:</strong> File has extension <code>.png</code> but true byte format is <strong>WEBP</strong>. Corrected copy preserved in <code>audit/verified_images/</code>.
+            </div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/transformational.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">870 x 580</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">22.3 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card" data-category="leadership" data-mismatch="false" data-text="leadership/visionary.png visionary leadership badge png">
+        <div class="img-wrapper" onclick="openModal('downloaded_images/leadership/visionary.png', 'Visionary Leadership Badge (1378 x 919, PNG)')">
+          <img src="downloaded_images/leadership/visionary.png" alt="Visionary Leadership Badge" loading="lazy">
+          <div class="badge-bar">
+            <span class="badge badge-png">PNG</span>
+            
+          </div>
+          <span class="badge-verified">✓ Verified</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Visionary Leadership Badge</div>
+          <div class="card-desc">Psychometric test result archetype badge</div>
+          
+          <div class="meta-list">
+            <div class="meta-row"><span class="meta-label">Path:</span><span class="meta-val">leadership/visionary.png</span></div>
+            <div class="meta-row"><span class="meta-label">Dimensions:</span><span class="meta-val">1378 x 919</span></div>
+            <div class="meta-row"><span class="meta-label">File Size:</span><span class="meta-val">134.0 KB</span></div>
+            <div class="meta-row"><span class="meta-label">Page Used:</span><span class="meta-val">/tests</span></div>
+            <div class="meta-row"><span class="meta-label">Permissions:</span><span class="meta-val">Custom Diagnostic Graphic</span></div>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+
+  <div id="modal" class="modal" onclick="closeModal()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <img id="modal-img" class="modal-img" src="" alt="">
+      <div id="modal-caption" class="modal-caption"></div>
+    </div>
+  </div>
+
+  <script>
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.card');
+    const searchInput = document.getElementById('search');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilters();
+      });
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+
+    function applyFilters() {
+      const activeCat = document.querySelector('.filter-btn.active').dataset.cat;
+      const query = searchInput.value.toLowerCase().trim();
+
+      cards.forEach(card => {
+        const catMatch = activeCat === 'all' || 
+          (activeCat === 'mismatch' ? card.dataset.mismatch === 'true' : card.dataset.category === activeCat);
+        const textMatch = !query || card.dataset.text.includes(query);
+
+        if (catMatch && textMatch) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openModal(src, caption) {
+      document.getElementById('modal-img').src = src;
+      document.getElementById('modal-caption').innerText = caption;
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

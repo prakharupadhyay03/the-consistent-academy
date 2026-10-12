@@ -1,0 +1,272 @@
+[
+  {
+    "url": "/gallery/vidya.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 613994,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/gallery/vidya.png",
+    "error": null
+  },
+  {
+    "url": "/gallery/v2.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 642676,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/gallery/v2.png",
+    "error": null
+  },
+  {
+    "url": "/gallery/v3.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 678130,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/gallery/v3.png",
+    "error": null
+  },
+  {
+    "url": "/gallery/v4.png",
+    "status": "Inaccessible (Network Timeout / Error)",
+    "httpStatus": "Error",
+    "contentType": "none",
+    "size": 0,
+    "detectedFormat": "none",
+    "localPath": "N/A",
+    "error": "The operation was aborted due to timeout"
+  },
+  {
+    "url": "/gallery/v5.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 343781,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/gallery/v5.png",
+    "error": null
+  },
+  {
+    "url": "/gallery/v6.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 618848,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/gallery/v6.png",
+    "error": null
+  },
+  {
+    "url": "/gallery/v9.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 199725,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v9.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v12.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 200355,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v12.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v13.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 259351,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v13.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v14.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 141536,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v14.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v16.jpeg",
+    "status": "Inaccessible (Network Timeout / Error)",
+    "httpStatus": "Error",
+    "contentType": "none",
+    "size": 0,
+    "detectedFormat": "none",
+    "localPath": "N/A",
+    "error": "The operation was aborted due to timeout"
+  },
+  {
+    "url": "/gallery/v17.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 91361,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v17.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v20.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 264826,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v20.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v21.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 294985,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v21.jpeg",
+    "error": null
+  },
+  {
+    "url": "/gallery/v22.jpeg",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/jpeg",
+    "size": 384281,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/gallery/v22.jpeg",
+    "error": null
+  },
+  {
+    "url": "/courses/img1.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 49934,
+    "detectedFormat": "webp",
+    "localPath": "audit/downloaded_images/courses/img1.png",
+    "error": null
+  },
+  {
+    "url": "/courses/img9.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 705825,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/courses/img9.png",
+    "error": null
+  },
+  {
+    "url": "/courses/img10.png",
+    "status": "Inaccessible (Network Timeout / Error)",
+    "httpStatus": "Error",
+    "contentType": "none",
+    "size": 0,
+    "detectedFormat": "none",
+    "localPath": "N/A",
+    "error": "The operation was aborted due to timeout"
+  },
+  {
+    "url": "/courses/img12.png",
+    "status": "Inaccessible (Network Timeout / Error)",
+    "httpStatus": "Error",
+    "contentType": "none",
+    "size": 0,
+    "detectedFormat": "none",
+    "localPath": "N/A",
+    "error": "The operation was aborted due to timeout"
+  },
+  {
+    "url": "/courses/img14.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 283988,
+    "detectedFormat": "webp",
+    "localPath": "audit/downloaded_images/courses/img14.png",
+    "error": null
+  },
+  {
+    "url": "/leadership/democratic.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 501885,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/leadership/democratic.png",
+    "error": null
+  },
+  {
+    "url": "/leadership/laissez.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 533201,
+    "detectedFormat": "png",
+    "localPath": "audit/downloaded_images/leadership/laissez.png",
+    "error": null
+  },
+  {
+    "url": "/leadership/laissezFaire.png",
+    "status": "Inaccessible / Non-existent (SPA HTML Fallback)",
+    "httpStatus": 200,
+    "contentType": "text/html; charset=utf-8",
+    "size": 0,
+    "detectedFormat": "html",
+    "localPath": "N/A",
+    "error": "Server returned SPA index.html fallback instead of an image asset"
+  },
+  {
+    "url": "/leadership/transactional.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 70949,
+    "detectedFormat": "jpeg",
+    "localPath": "audit/downloaded_images/leadership/transactional.png",
+    "error": null
+  },
+  {
+    "url": "/leadership/servant.png",
+    "status": "Downloaded & Verified",
+    "httpStatus": 200,
+    "contentType": "image/png",
+    "size": 41170,
+    "detectedFormat": "webp",
+    "localPath": "audit/downloaded_images/leadership/servant.png",
+    "error": null
+  },
+  {
+    "url": "/leadership/bureaucratic.png",
+    "status": "Inaccessible (Network Timeout / Error)",
+    "httpStatus": "Error",
+    "contentType": "none",
+    "size": 0,
+    "detectedFormat": "none",
+    "localPath": "N/A",
+    "error": "The operation was aborted due to timeout"
+  },
+  {
+    "url": "/test.jpg",
+    "status": "Inaccessible / Non-existent (SPA HTML Fallback)",
+    "httpStatus": 200,
+    "contentType": "text/html; charset=utf-8",
+    "size": 0,
+    "detectedFormat": "html",
+    "localPath": "N/A",
+    "error": "Server returned SPA index.html fallback instead of an image asset"
+  }
+]

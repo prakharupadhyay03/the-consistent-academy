@@ -1,0 +1,122 @@
+export const testimonials = [
+  {
+    id: 1,
+    name: "Ninoshka",
+    role: "Veterinary Professional",
+    course: "IELTS Preparation",
+    score: "Band 7.5",
+    band: 7.5,
+    destination: "Canada",
+    flag: "🇨🇦",
+    rating: 5,
+    quote: "With consistent guidance and focused practice, I cleared my IELTS in my first attempt with an overall band score of 7.5. Today, I am in Canada, pursuing my goals with confidence and pride."
+  },
+  {
+    id: 2,
+    name: "Sucharita",
+    role: "Aspiring International Student",
+    course: "IELTS Preparation",
+    score: "Band 7.0",
+    band: 7.0,
+    destination: "Overseas Studies",
+    flag: "🌍",
+    rating: 5,
+    quote: "I cleared my IELTS in my first attempt with an overall band score of 7. Choosing the right guidance helped me move one step closer to building my life abroad."
+  },
+  {
+    id: 3,
+    name: "Deepak S.",
+    role: "Grade 12 Student",
+    course: "IELTS Preparation",
+    score: "Band 6.5",
+    band: 6.5,
+    destination: "Australia",
+    flag: "🇦🇺",
+    rating: 5,
+    quote: "I cleared my IELTS with a band score of 6.5, which was exactly what my university required. This achievement helped me continue my education in Australia and make my family proud."
+  },
+  {
+    id: 4,
+    name: "Atharv",
+    role: "Mechanical Engineering Student",
+    course: "IELTS Preparation",
+    score: "Band 6.5",
+    band: 6.5,
+    destination: "Germany",
+    flag: "🇩🇪",
+    rating: 5,
+    quote: "Scoring a 6.5 band in IELTS helped me achieve my dream of studying in Germany. The preparation was structured, practical, and constantly motivating."
+  },
+  {
+    id: 5,
+    name: "Shreya",
+    role: "Literature Student",
+    course: "IELTS Preparation",
+    score: "Band 6.5",
+    band: 6.5,
+    destination: "Germany & UK",
+    flag: "🇬🇧",
+    rating: 5,
+    quote: "I cleared my IELTS with a 6.5 band and secured admission to my dream university in Germany and the UK. The guidance throughout the process made everything clearer and easier."
+  },
+  {
+    id: 6,
+    name: "Amol D.",
+    role: "Working Professional",
+    course: "IELTS Preparation",
+    score: "Target Achieved",
+    band: 6.5,
+    destination: "Germany",
+    flag: "🇩🇪",
+    rating: 5,
+    quote: "With consistent practice and focused mentoring, I achieved the score required for higher studies in Germany. This journey taught me discipline and confidence."
+  },
+  {
+    id: 7,
+    name: "Neha O.",
+    role: "Working Professional",
+    course: "IELTS Preparation",
+    score: "Band 7.0",
+    band: 7.0,
+    destination: "Global Career",
+    flag: "🌍",
+    rating: 5,
+    quote: "I achieved a strong band score of 7 through consistency and the right mentorship. Managing work and preparation was challenging, but the support made it possible."
+  },
+  {
+    id: 8,
+    name: "Monika",
+    role: "Canada PR Applicant",
+    course: "IELTS Preparation",
+    score: "Band 6.5",
+    band: 6.5,
+    destination: "Canada (PR)",
+    flag: "🇨🇦",
+    rating: 5,
+    quote: "Clearing my IELTS with a 6.5 band helped me successfully apply for Canada PR. This success has helped me give my daughter a better life in Canada."
+  },
+  {
+    id: 9,
+    name: "IT Aspirant",
+    role: "IT Professional",
+    course: "IELTS Preparation",
+    score: "Higher Studies Target",
+    band: 6.5,
+    destination: "Germany",
+    flag: "🇩🇪",
+    rating: 5,
+    quote: "With proper guidance, I cleared my IELTS and moved to Germany for higher studies. Things are going well for me here, and I’m grateful for the support I received."
+  },
+  {
+    id: 10,
+    name: "Sudhanshu",
+    role: "Aspiring International Student",
+    course: "IELTS Preparation",
+    score: "Band 6.5",
+    band: 6.5,
+    destination: "Germany",
+    flag: "🇩🇪",
+    rating: 5,
+    quote: "I managed to score 6.5 in IELTS through consistency and regular practice. This achievement helped me move closer to my goal of studying in Germany."
+  }
+];
