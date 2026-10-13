@@ -26,52 +26,11 @@ export default function Navbar() {
     return location.pathname.startsWith(path);
   };
 
+  const isHome = location.pathname === '/';
+
   return (
-    <>
-      {/* TOP ANNOUNCEMENT BAR — Approximately 36px high on desktop */}
-      <div className="bg-brand-aubergine text-white text-[11px] sm:text-xs h-9 border-b border-brand-aubergine-deep flex items-center">
-        <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-6 xl:px-8 flex items-center justify-between gap-3">
-          {/* Left: gold dot, British Council accreditation, separator, 19+ years experience */}
-          <div className="flex items-center gap-2 text-stone-300 min-w-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-gold shrink-0" aria-hidden="true"></span>
-            <span className="font-heading font-medium text-stone-100 truncate">
-              British Council Certified IELTS Master Trainer
-            </span>
-            <span className="text-stone-500 hidden sm:inline select-none">•</span>
-            <span className="text-stone-300 hidden sm:inline whitespace-nowrap font-sans">
-              19+ Years of Academic Mentorship
-            </span>
-          </div>
-
-          {/* Right: phone icon + phone number, separator, Learners Community link */}
-          <div className="flex items-center gap-3 sm:gap-4 text-stone-300 shrink-0 text-xs font-sans">
-            <a
-              href={`tel:${contactInfo.phoneRaw}`}
-              className="flex items-center gap-1.5 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold"
-              title="Call Admissions"
-            >
-              <Phone className="w-3 h-3 text-brand-gold shrink-0" />
-              <span className="hidden sm:inline font-heading font-medium text-stone-200">{contactInfo.phone}</span>
-              <span className="sm:hidden text-[11px] font-heading font-medium text-stone-200">Call</span>
-            </a>
-            <span className="text-stone-600 select-none">|</span>
-            <a
-              href={contactInfo.whatsappCommunityUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-stone-200 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold font-heading font-medium"
-              title="Join WhatsApp Learners Community"
-            >
-              <MessageSquare className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span className="whitespace-nowrap">Learners Community</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* FLOATING PILL NAVBAR WRAPPER */}
-      <header className="sticky top-0 z-50 pointer-events-none transition-all duration-200">
-        <div className="w-full max-w-[1400px] mx-auto px-3.5 sm:px-5 lg:px-7 pt-2.5 pb-2.5 lg:pt-3 lg:pb-3.5">
+    <header className={`${isHome ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-50 pointer-events-none transition-all duration-200`}>
+      <div className="w-full max-w-[1400px] mx-auto px-3.5 sm:px-5 lg:px-7 pt-2.5 pb-2.5 lg:pt-3 lg:pb-3.5">
 
           {/* Main Floating Capsule */}
           <div className="pointer-events-auto bg-brand-ivory/95 backdrop-blur-md rounded-full border border-brand-border shadow-[0_4px_20px_-2px_rgba(53,33,59,0.08),0_2px_6px_-1px_rgba(53,33,59,0.04)] transition-all">
@@ -111,8 +70,8 @@ export default function Navbar() {
                         key={link.name}
                         to={link.path}
                         className={`px-2.5 xl:px-3.5 py-1.5 text-[13px] xl:text-[13.5px] font-heading rounded-full transition-colors relative whitespace-nowrap group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${active
-                            ? 'text-brand-aubergine font-bold'
-                            : 'font-medium text-brand-charcoal hover:text-brand-purple'
+                          ? 'text-brand-aubergine font-bold'
+                          : 'font-medium text-brand-charcoal hover:text-brand-purple'
                           }`}
                       >
                         <span>{link.name}</span>
@@ -125,17 +84,8 @@ export default function Navbar() {
                 </div>
               </nav>
 
-              {/* 3. Right: Phone Icon & Number + Solid Purple Enroll Now Button */}
-              <div className="flex items-center justify-end gap-2.5 xl:gap-4 shrink-0">
-                <a
-                  href={`tel:${contactInfo.phoneRaw}`}
-                  className="text-xs xl:text-[13px] font-heading font-semibold text-brand-aubergine hover:text-brand-purple transition-colors px-1 py-1.5 flex items-center gap-1.5 whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-purple rounded-full"
-                  title="Call Admissions"
-                >
-                  <Phone className="w-3.5 h-3.5 text-brand-purple shrink-0" />
-                  <span>{contactInfo.phone}</span>
-                </a>
-
+              {/* 3. Right: Solid Purple Enroll Now Button */}
+              <div className="flex items-center justify-end shrink-0">
                 <Link
                   to="/contact"
                   className="inline-flex items-center justify-center font-heading font-semibold text-white bg-brand-purple hover:bg-brand-purple-hover px-4 xl:px-5 py-2 xl:py-2.5 rounded-full shadow-sm transition-all ease-out hover:-translate-y-0.5 hover:shadow whitespace-nowrap text-xs xl:text-[13px] active:translate-y-0"
@@ -200,8 +150,8 @@ export default function Navbar() {
                       key={link.name}
                       to={link.path}
                       className={`block px-3.5 py-2.5 rounded-xl text-sm sm:text-base font-heading transition-colors ${active
-                          ? 'bg-white text-brand-aubergine font-bold shadow-subtle border-l-4 border-brand-purple'
-                          : 'font-medium text-brand-charcoal hover:bg-white/60'
+                        ? 'bg-white text-brand-aubergine font-bold shadow-subtle border-l-4 border-brand-purple'
+                        : 'font-medium text-brand-charcoal hover:bg-white/60'
                         }`}
                     >
                       {link.name}
@@ -243,6 +193,5 @@ export default function Navbar() {
 
         </div>
       </header>
-    </>
   );
 }

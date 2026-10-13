@@ -111,7 +111,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative bg-brand-ivory pt-8 pb-14 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20 border-b border-brand-border overflow-hidden">
+    <section className="relative bg-brand-ivory pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20 xl:pt-40 border-b border-brand-border overflow-hidden">
 
       {/* ==================================================================== */}
       {/* CINEMATIC FULL-WIDTH BACKGROUND SLIDESHOW LAYER                      */}
@@ -148,8 +148,7 @@ export default function HeroSection() {
         {/* Carefully Balanced Ivory Gradient Overlay (Stronger on left reading area, transparent towards right) */}
         <div className="hero-gradient-overlay" />
 
-        {/* Top & Bottom Vignettes for Seamless Transitions */}
-        <div className="hero-vignette-top" />
+        {/* Bottom Vignette for Seamless Section Transition */}
         <div className="hero-vignette-bottom" />
       </div>
 

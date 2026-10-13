@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Play, Pause, X, ZoomIn, Camera, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause, X, ZoomIn, ExternalLink } from 'lucide-react';
 import { galleryPhotos } from '../../data/gallery';
 import Button from '../common/Button';
 
@@ -211,20 +211,13 @@ export default function GalleryPreview() {
           </div>
 
           {/* Editorial Navigation & Auto-Scroll Controls */}
-          <div className="flex flex-wrap items-center gap-3">
-            
-            {/* Photo Count Counter */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-brand-border text-xs font-semibold text-brand-charcoal-muted shadow-subtle">
-              <Camera className="w-3.5 h-3.5 text-brand-purple" />
-              <span>{galleryPhotos.length} Authentic Photographs</span>
-            </div>
-
+          <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Play / Pause Auto-scroll Button */}
             {!prefersReducedMotion && (
               <button
                 type="button"
                 onClick={() => setIsPaused(!isPaused)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all shadow-subtle ${
+                className={`h-9 inline-flex items-center gap-1.5 px-3 sm:px-3.5 rounded-lg border text-xs font-semibold transition-all shadow-subtle ${
                   isPaused
                     ? 'bg-brand-mauve border-brand-purple/40 text-brand-aubergine'
                     : 'bg-white border-brand-border hover:bg-stone-50 text-brand-charcoal'

@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  SquarePen, 
-  LogIn, 
   UserRound, 
   CalendarDays, 
   ArrowRight, 
   X, 
-  CheckCircle2, 
   Clock,
-  LogOut,
   Sparkles
 } from 'lucide-react';
 
@@ -135,76 +131,33 @@ Fluency is built through repetition in low-stakes environments. Practice with su
   ]);
 
   // Modal states
-  const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
-  
-  // User auth state
-  const [user, setUser] = useState(null);
-  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
-  const [authEmail, setAuthEmail] = useState('');
-  const [authPassword, setAuthPassword] = useState('');
-  const [authName, setAuthName] = useState('');
 
-  // Blog creation form state
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    excerpt: '',
-    content: ''
-  });
-  const [submitSuccessMessage, setSubmitSuccessMessage] = useState('');
-
-  // Handle write blog submission
-  const handleBlogSubmit = (e) => {
-    e.preventDefault();
-    if (!newBlog.title || !newBlog.content || !newBlog.author) return;
-
-    const newPost = {
-      id: `post-${Date.now()}`,
-      title: newBlog.title,
-      author: newBlog.author,
-      date: 'Just now',
-      readTime: '4 min read',
-      excerpt: newBlog.excerpt || newBlog.content.slice(0, 160) + '...',
-      content: newBlog.content
+  // Close modal on Escape key press & prevent background scroll
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedArticle(null);
+      }
     };
 
-    setArticles([newPost, ...articles]);
-    setNewBlog({ title: '', author: '', excerpt: '', content: '' });
-    setIsWriteModalOpen(false);
-    setSubmitSuccessMessage('🎉 Your blog has been published to the community feed!');
-    setTimeout(() => setSubmitSuccessMessage(''), 6000);
-  };
+    if (selectedArticle) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
 
-  // Handle auth submit
-  const handleAuthSubmit = (e) => {
-    e.preventDefault();
-    if (!authEmail) return;
-
-    const loggedInUser = {
-      name: authMode === 'register' ? (authName || 'Learner') : (authEmail.split('@')[0] || 'Learner'),
-      email: authEmail
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
     };
-
-    setUser(loggedInUser);
-    setIsAuthModalOpen(false);
-    setSubmitSuccessMessage(`✨ Welcome back, ${loggedInUser.name}! You are now signed in.`);
-    setTimeout(() => setSubmitSuccessMessage(''), 5000);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setSubmitSuccessMessage('You have been logged out.');
-    setTimeout(() => setSubmitSuccessMessage(''), 4000);
-  };
+  }, [selectedArticle]);
 
   return (
     <div className="bg-brand-ivory min-h-screen py-12 sm:py-16 lg:py-20">
       <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* A. Blog Introduction (Centered) */}
-        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-aubergine tracking-tight mb-3">
             Community Blogs
           </h1>
@@ -212,67 +165,6 @@ Fluency is built through repetition in low-stakes environments. Practice with su
             Share insights, stories and learning experiences ✨
           </p>
         </div>
-
-        {/* B. Blog Action Buttons (Horizontally Aligned Pills) */}
-        <div className="flex flex-wrap items-center justify-center gap-3.5 mb-12 sm:mb-16">
-          <button
-            type="button"
-            onClick={() => {
-              if (!user) {
-                // If not logged in, we prefill author if user provides it in the modal
-              }
-              setIsWriteModalOpen(true);
-            }}
-            className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-brand-purple hover:bg-brand-purple-hover text-white font-heading font-semibold text-sm sm:text-[15px] shadow-sm hover:shadow transition-all duration-[180ms] ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-2"
-          >
-            <SquarePen className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-            <span>Write a Blog</span>
-          </button>
-
-          {user ? (
-            <div className="inline-flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-heading font-semibold text-brand-aubergine bg-white border border-brand-border px-4 py-2.5 rounded-full shadow-sm">
-                Signed in as <strong className="text-brand-purple">{user.name}</strong>
-              </span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="p-2.5 rounded-full bg-white hover:bg-stone-50 border border-brand-border text-brand-charcoal hover:text-red-600 transition-colors shadow-sm"
-                title="Log out"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => {
-                setAuthMode('login');
-                setIsAuthModalOpen(true);
-              }}
-              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-white hover:bg-stone-50 text-brand-aubergine font-heading font-semibold text-sm sm:text-[15px] border border-brand-border shadow-sm hover:shadow transition-all duration-[180ms] ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-2"
-            >
-              <LogIn className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-brand-purple" />
-              <span>Login / Register</span>
-            </button>
-          )}
-        </div>
-
-        {/* Success / Feedback Notification Banner */}
-        {submitSuccessMessage && (
-          <div className="max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-center justify-between gap-3 text-sm font-medium animate-in fade-in duration-200">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <span>{submitSuccessMessage}</span>
-            </div>
-            <button 
-              onClick={() => setSubmitSuccessMessage('')}
-              className="text-emerald-700 hover:text-emerald-950 p-1"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        )}
 
         {/* C. Community Blog Cards (Three-Column Desktop Grid) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
@@ -323,229 +215,9 @@ Fluency is built through repetition in low-stakes environments. Practice with su
 
       </div>
 
-      {/* ========================================================================= */}
-      {/* MODAL 1: Write a Blog Submission Modal */}
-      {/* ========================================================================= */}
-      {isWriteModalOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-aubergine-deep/60 backdrop-blur-sm animate-in fade-in duration-150"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="write-modal-title"
-        >
-          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-elevated border border-brand-border max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-brand-border mb-6">
-              <div>
-                <h2 id="write-modal-title" className="font-heading text-xl sm:text-2xl font-bold text-brand-aubergine">
-                  Write a Community Blog
-                </h2>
-                <p className="text-xs sm:text-sm text-brand-charcoal-muted mt-0.5">
-                  Share your study strategies, experiences, or reflections with fellow learners.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsWriteModalOpen(false)}
-                className="p-1.5 rounded-lg text-brand-charcoal hover:bg-stone-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
-                aria-label="Close dialog"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            <form onSubmit={handleBlogSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                  Your Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Priyanshu Deshmukh"
-                  value={newBlog.author || (user ? user.name : '')}
-                  onChange={(e) => setNewBlog({ ...newBlog, author: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all"
-                />
-              </div>
 
-              <div>
-                <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                  Blog Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. 5 Practical Tips to Build Confident Public Speaking"
-                  value={newBlog.title}
-                  onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all"
-                />
-              </div>
 
-              <div>
-                <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                  Brief Summary / Key Takeaway (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="A one-sentence summary for the card preview..."
-                  value={newBlog.excerpt}
-                  onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                  Blog Content *
-                </label>
-                <textarea
-                  required
-                  rows={6}
-                  placeholder="Write your article, learning notes, or reflection here..."
-                  value={newBlog.content}
-                  onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all font-sans leading-relaxed"
-                ></textarea>
-              </div>
-
-              <div className="pt-4 border-t border-brand-border flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsWriteModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl border border-brand-border text-sm font-heading font-semibold text-brand-charcoal hover:bg-stone-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-brand-purple hover:bg-brand-purple-hover text-white text-sm font-heading font-semibold shadow-sm hover:shadow transition-all"
-                >
-                  Publish to Community
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL 2: Login / Register Authentication Modal */}
-      {/* ========================================================================= */}
-      {isAuthModalOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-aubergine-deep/60 backdrop-blur-sm animate-in fade-in duration-150"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="auth-modal-title"
-        >
-          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-elevated border border-brand-border">
-            <div className="flex items-center justify-between pb-3 border-b border-brand-border mb-5">
-              <div>
-                <h2 id="auth-modal-title" className="font-heading text-xl font-bold text-brand-aubergine">
-                  {authMode === 'login' ? 'Learner Sign In' : 'Create Learner Account'}
-                </h2>
-                <p className="text-xs text-brand-charcoal-muted mt-0.5">
-                  Access the community blogging platform.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsAuthModalOpen(false)}
-                className="p-1.5 rounded-lg text-brand-charcoal hover:bg-stone-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
-                aria-label="Close dialog"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Tab Switcher */}
-            <div className="flex p-1 bg-stone-100 rounded-xl mb-5">
-              <button
-                type="button"
-                onClick={() => setAuthMode('login')}
-                className={`flex-1 py-1.5 text-xs font-heading font-semibold rounded-lg transition-all ${
-                  authMode === 'login'
-                    ? 'bg-white text-brand-aubergine shadow-sm'
-                    : 'text-brand-charcoal-muted hover:text-brand-aubergine'
-                }`}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => setAuthMode('register')}
-                className={`flex-1 py-1.5 text-xs font-heading font-semibold rounded-lg transition-all ${
-                  authMode === 'register'
-                    ? 'bg-white text-brand-aubergine shadow-sm'
-                    : 'text-brand-charcoal-muted hover:text-brand-aubergine'
-                }`}
-              >
-                Register
-              </button>
-            </div>
-
-            <form onSubmit={handleAuthSubmit} className="space-y-3.5">
-              {authMode === 'register' && (
-                <div>
-                  <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                    Your Full Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Siddhi Dhoke"
-                    value={authName}
-                    onChange={(e) => setAuthName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="student@example.com"
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-heading font-semibold text-brand-aubergine mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-stone-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple focus:bg-white transition-all"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-xl bg-brand-purple hover:bg-brand-purple-hover text-white text-sm font-heading font-semibold shadow-sm hover:shadow transition-all mt-2"
-              >
-                {authMode === 'login' ? 'Sign In' : 'Create Account'}
-              </button>
-            </form>
-
-            <div className="mt-4 pt-3 border-t border-brand-border text-center">
-              <p className="text-[11px] text-brand-charcoal-muted">
-                Free community access for all academy learners &amp; educators.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ========================================================================= */}
       {/* MODAL 3: Read More Article Reader Modal */}
@@ -556,11 +228,27 @@ Fluency is built through repetition in low-stakes environments. Practice with su
           role="dialog"
           aria-modal="true"
           aria-labelledby="reader-modal-title"
+          onClick={() => setSelectedArticle(null)}
         >
-          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full p-6 sm:p-10 shadow-elevated border border-brand-border max-h-[90vh] overflow-y-auto">
-            {/* Header info */}
-            <div className="flex items-start justify-between gap-4 pb-4 border-b border-brand-border mb-6">
-              <div>
+          <div 
+            className="relative bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full shadow-elevated border border-brand-border max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Pinned Top-Right Cancel / Close Button (Always visible during scrolling) */}
+            <button
+              type="button"
+              onClick={() => setSelectedArticle(null)}
+              className="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-30 p-2 sm:p-2.5 rounded-full bg-white/95 hover:bg-stone-100 border border-brand-border text-brand-aubergine hover:text-brand-purple shadow-sm hover:shadow transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple cursor-pointer"
+              aria-label="Close article reader"
+              title="Close reader (Esc)"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Scrollable Article Content Container */}
+            <div className="overflow-y-auto p-6 sm:p-10 flex-grow scroll-smooth">
+              {/* Header info */}
+              <div className="pb-4 border-b border-brand-border mb-6 pr-12 sm:pr-14">
                 <span className="inline-flex items-center gap-1 text-[11px] font-heading font-bold text-brand-purple bg-brand-purple-pale px-2.5 py-0.5 rounded-full mb-2">
                   <Sparkles className="w-3 h-3" />
                   <span>Community Article</span>
@@ -587,37 +275,28 @@ Fluency is built through repetition in low-stakes environments. Practice with su
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setSelectedArticle(null)}
-                className="p-1.5 rounded-lg text-brand-charcoal hover:bg-stone-100 transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
-                aria-label="Close reader"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+              {/* Article body */}
+              <div className="prose max-w-none text-brand-charcoal font-sans text-sm sm:text-base leading-relaxed space-y-4">
+                {selectedArticle.content.split('\n\n').map((para, idx) => (
+                  <p key={idx} className="leading-relaxed">
+                    {para}
+                  </p>
+                ))}
+              </div>
 
-            {/* Article body */}
-            <div className="prose max-w-none text-brand-charcoal font-sans text-sm sm:text-base leading-relaxed space-y-4">
-              {selectedArticle.content.split('\n\n').map((para, idx) => (
-                <p key={idx} className="leading-relaxed">
-                  {para}
-                </p>
-              ))}
-            </div>
-
-            {/* Close footer */}
-            <div className="mt-8 pt-5 border-t border-brand-border flex items-center justify-between">
-              <span className="text-xs text-brand-charcoal-muted">
-                The Consistent Academy Community
-              </span>
-              <button
-                type="button"
-                onClick={() => setSelectedArticle(null)}
-                className="px-5 py-2 rounded-xl bg-brand-aubergine hover:bg-brand-aubergine-light text-white text-xs sm:text-sm font-heading font-semibold transition-colors"
-              >
-                Close Article
-              </button>
+              {/* Close footer */}
+              <div className="mt-8 pt-5 border-t border-brand-border flex items-center justify-between">
+                <span className="text-xs text-brand-charcoal-muted">
+                  The Consistent Academy Community
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedArticle(null)}
+                  className="px-5 py-2.5 rounded-xl bg-brand-aubergine hover:bg-brand-aubergine-light text-white text-xs sm:text-sm font-heading font-semibold transition-colors shadow-sm"
+                >
+                  Close Article
+                </button>
+              </div>
             </div>
           </div>
         </div>

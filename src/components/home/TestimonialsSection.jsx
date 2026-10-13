@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Star, ChevronLeft, ChevronRight, Award } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { testimonials } from '../../data/testimonials';
 
-// The 4 verified testimonial cohorts for desktop (3 per group, group 4 features milestone achievements)
+// The 4 verified testimonial cohorts (3 per group, cohort 4 features milestone achievements)
 const DESKTOP_GROUPS = [
   testimonials.slice(0, 3), // Ninoshka, Sucharita, Deepak S.
   testimonials.slice(3, 6), // Atharv, Shreya, Amol D.
@@ -15,15 +15,18 @@ const PROGRESS_STEP_MS = 50;
 
 /**
  * Reusable Testimonial Card with premium hover interactions:
- * - 3-4px upward translation (hover:-translate-y-1)
- * - Subtle shadow transition (shadow-subtle to hover:shadow-card)
- * - Gold stars brighten subtly on card hover (group-hover:fill-amber-400)
- * - Pristine white background with deep aubergine and academy purple accents
+ * - Subtle lift on hover: translateY(-5px)
+ * - Soft, elegant shadow with aubergine and subtle purple depth
+ * - Slightly more prominent border using existing purple accent (hover:border-brand-purple/50)
+ * - Smooth transition: 300ms ease-out
+ * - Respects prefers-reduced-motion
+ * - Essential content always visible without requiring hover
+ * - Preserves existing white card, cream background, gold stars, purple accents, typography, and badges
  */
 function TestimonialCard({ item, isSpotlight = false }) {
   return (
     <div
-      className={`group bg-white rounded-xl border border-brand-border p-5 sm:p-6 lg:p-7 shadow-subtle hover:shadow-card hover:-translate-y-1 hover:border-brand-purple/35 transition-all duration-200 ease-out flex flex-col justify-between h-full ${
+      className={`group bg-white rounded-xl border border-brand-border p-5 sm:p-6 lg:p-7 shadow-subtle hover:shadow-[0_12px_24px_-4px_rgba(53,33,59,0.08),0_4px_12px_-2px_rgba(150,54,245,0.06)] hover:-translate-y-[5px] hover:border-brand-purple/50 motion-reduce:hover:translate-y-0 motion-reduce:transition-none transition-all duration-300 ease-out flex flex-col justify-between h-full select-none ${
         isSpotlight ? 'ring-1 ring-brand-purple/20 bg-gradient-to-b from-white to-brand-ivory/30' : ''
       }`}
     >
@@ -90,9 +93,11 @@ export default function TestimonialsSection() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const sectionRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+  const cardRefs = useRef([]);
   const isTransitioningRef = useRef(false);
-  const touchStartXRef = useRef(0);
-  const touchDeltaXRef = useRef(0);
+  const isScrollingProgrammaticallyRef = useRef(false);
+  const scrollTimeoutRef = useRef(null);
 
   const totalGroups = DESKTOP_GROUPS.length; // 4
   const totalTestimonials = testimonials.length; // 10
@@ -108,11 +113,11 @@ export default function TestimonialsSection() {
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // Responsive breakpoint detection (Mobile < 768px vs Desktop >= 768px)
+  // Responsive breakpoint detection (Mobile < 640px vs Tablet/Desktop >= 640px)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 640);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -127,6 +132,15 @@ export default function TestimonialsSection() {
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Lightweight IntersectionObserver for scroll-reveal entrance
@@ -153,88 +167,164 @@ export default function TestimonialsSection() {
     return () => observer.disconnect();
   }, [prefersReducedMotion]);
 
-  // Sync mobile index with active group when switching modes
-  const syncIndices = useCallback((newGroup, newMobileIdx) => {
-    setActiveGroup(newGroup);
-    setMobileIndex(newMobileIdx);
-    setElapsed(0);
-  }, []);
+  // Smooth programmatic scroll to a specific card index
+  const scrollToCard = useCallback(
+    (targetCardIndex) => {
+      if (!scrollContainerRef.current) return;
+      const container = scrollContainerRef.current;
+      const targetCard = cardRefs.current[targetCardIndex];
+      if (!targetCard) return;
 
-  // Manual Navigation Handlers with debouncing guard against rapid double clicks
+      isScrollingProgrammaticallyRef.current = true;
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      const cardRect = targetCard.getBoundingClientRect();
+      const currentScroll = container.scrollLeft;
+      const targetLeft = currentScroll + (cardRect.left - containerRect.left);
+
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      const finalScroll = Math.max(0, Math.min(targetLeft, maxScroll));
+
+      container.scrollTo({
+        left: finalScroll,
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      });
+
+      scrollTimeoutRef.current = setTimeout(() => {
+        isScrollingProgrammaticallyRef.current = false;
+      }, prefersReducedMotion ? 50 : 500);
+    },
+    [prefersReducedMotion]
+  );
+
+  // Manual scroll sync listener with active indicator tracking
+  const handleScroll = useCallback(() => {
+    if (isScrollingProgrammaticallyRef.current) return;
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    // At the end: last card and last cohort
+    if (maxScroll > 0 && scrollLeft >= maxScroll - 20) {
+      setActiveGroup(totalGroups - 1);
+      setMobileIndex(totalTestimonials - 1);
+      return;
+    }
+
+    // At the start: first card and first cohort
+    if (scrollLeft <= 15) {
+      setActiveGroup(0);
+      setMobileIndex(0);
+      return;
+    }
+
+    const containerLeft = container.getBoundingClientRect().left;
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    cardRefs.current.forEach((cardEl, idx) => {
+      if (!cardEl) return;
+      const cardLeft = cardEl.getBoundingClientRect().left;
+      const distance = Math.abs(cardLeft - containerLeft);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = idx;
+      }
+    });
+
+    setMobileIndex(closestIndex);
+    const groupIdx = Math.min(totalGroups - 1, Math.floor(closestIndex / 3));
+    setActiveGroup(groupIdx);
+  }, [totalGroups, totalTestimonials]);
+
+  // Next navigation handler
   const handleNext = useCallback(() => {
     if (isTransitioningRef.current) return;
     isTransitioningRef.current = true;
 
-    const isMobileMode = typeof window !== 'undefined' ? window.innerWidth < 768 : isMobile;
+    const isMobileMode = typeof window !== 'undefined' ? window.innerWidth < 640 : isMobile;
 
     if (isMobileMode) {
       const nextMobile = (mobileIndex + 1) % totalTestimonials;
       const nextGrp = Math.min(3, Math.floor(nextMobile / 3));
-      syncIndices(nextGrp, nextMobile);
+      setActiveGroup(nextGrp);
+      setMobileIndex(nextMobile);
+      setElapsed(0);
+      scrollToCard(nextMobile);
     } else {
       const nextGrp = (activeGroup + 1) % totalGroups;
-      const nextMobile = nextGrp * 3 < totalTestimonials ? nextGrp * 3 : totalTestimonials - 1;
-      syncIndices(nextGrp, nextMobile);
+      const targetCard = nextGrp * 3 < totalTestimonials ? nextGrp * 3 : totalTestimonials - 1;
+      setActiveGroup(nextGrp);
+      setMobileIndex(targetCard);
+      setElapsed(0);
+      scrollToCard(targetCard);
     }
 
     setTimeout(() => {
       isTransitioningRef.current = false;
     }, 450);
-  }, [isMobile, mobileIndex, totalTestimonials, activeGroup, totalGroups, syncIndices]);
+  }, [isMobile, mobileIndex, totalTestimonials, activeGroup, totalGroups, scrollToCard]);
 
+  // Prev navigation handler
   const handlePrev = useCallback(() => {
     if (isTransitioningRef.current) return;
     isTransitioningRef.current = true;
 
-    const isMobileMode = typeof window !== 'undefined' ? window.innerWidth < 768 : isMobile;
+    const isMobileMode = typeof window !== 'undefined' ? window.innerWidth < 640 : isMobile;
 
     if (isMobileMode) {
       const prevMobile = (mobileIndex - 1 + totalTestimonials) % totalTestimonials;
       const prevGrp = Math.min(3, Math.floor(prevMobile / 3));
-      syncIndices(prevGrp, prevMobile);
+      setActiveGroup(prevGrp);
+      setMobileIndex(prevMobile);
+      setElapsed(0);
+      scrollToCard(prevMobile);
     } else {
       const prevGrp = (activeGroup - 1 + totalGroups) % totalGroups;
-      const prevMobile = prevGrp * 3 < totalTestimonials ? prevGrp * 3 : totalTestimonials - 1;
-      syncIndices(prevGrp, prevMobile);
+      const targetCard = prevGrp * 3 < totalTestimonials ? prevGrp * 3 : totalTestimonials - 1;
+      setActiveGroup(prevGrp);
+      setMobileIndex(targetCard);
+      setElapsed(0);
+      scrollToCard(targetCard);
     }
 
     setTimeout(() => {
       isTransitioningRef.current = false;
     }, 450);
-  }, [isMobile, mobileIndex, totalTestimonials, activeGroup, totalGroups, syncIndices]);
+  }, [isMobile, mobileIndex, totalTestimonials, activeGroup, totalGroups, scrollToCard]);
 
-  const jumpToGroup = useCallback((groupIndex) => {
-    if (isTransitioningRef.current || groupIndex === activeGroup) return;
-    isTransitioningRef.current = true;
+  // Direct jump to cohort
+  const jumpToGroup = useCallback(
+    (groupIndex) => {
+      if (isTransitioningRef.current || groupIndex === activeGroup) return;
+      isTransitioningRef.current = true;
 
-    const targetMobile = groupIndex * 3 < totalTestimonials ? groupIndex * 3 : totalTestimonials - 1;
-    syncIndices(groupIndex, targetMobile);
+      const targetCard = groupIndex * 3 < totalTestimonials ? groupIndex * 3 : totalTestimonials - 1;
+      setActiveGroup(groupIndex);
+      setMobileIndex(targetCard);
+      setElapsed(0);
+      scrollToCard(targetCard);
 
-    setTimeout(() => {
-      isTransitioningRef.current = false;
-    }, 450);
-  }, [activeGroup, totalTestimonials, syncIndices]);
+      setTimeout(() => {
+        isTransitioningRef.current = false;
+      }, 450);
+    },
+    [activeGroup, totalTestimonials, scrollToCard]
+  );
 
-  // Touch Swipe Handlers for mobile
-  const handleTouchStart = (e) => {
-    touchStartXRef.current = e.touches[0].clientX;
-    touchDeltaXRef.current = 0;
-    setIsHovered(true); // pause timer while touching
-  };
-
-  const handleTouchMove = (e) => {
-    touchDeltaXRef.current = e.touches[0].clientX - touchStartXRef.current;
-  };
-
-  const handleTouchEnd = () => {
-    setIsHovered(false);
-    const swipeThreshold = 45; // 45px swipe threshold
-    if (touchDeltaXRef.current < -swipeThreshold) {
+  // Keyboard navigation on scroll container
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
       handleNext();
-    } else if (touchDeltaXRef.current > swipeThreshold) {
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
       handlePrev();
     }
-    touchDeltaXRef.current = 0;
   };
 
   // Automatic Carousel Interval & Progress Bar Timer
@@ -279,7 +369,6 @@ export default function TestimonialsSection() {
       aria-label="Student Testimonials and Outcomes"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Section Header with Scroll-Reveal Fade & Upward Motion */}
         <div
           className={`flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 transition-all duration-700 ease-out ${
@@ -305,7 +394,6 @@ export default function TestimonialsSection() {
 
           {/* Carousel Navigation: 4 Progress Indicators & Chevron Arrows */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-5 self-start md:self-end">
-            
             {/* 4 Animated Carousel Progress Indicators */}
             <div
               className="flex items-center gap-2"
@@ -380,7 +468,6 @@ export default function TestimonialsSection() {
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
-
           </div>
         </div>
 
@@ -392,86 +479,64 @@ export default function TestimonialsSection() {
               : 'opacity-0 translate-y-6'
           }`}
         >
-          {/* DESKTOP & TABLET VIEW (3 Cards per Group, Group 4 Features Spotlight) */}
-          <div className="hidden md:block overflow-hidden">
+          {/* Horizontally Scrollable Testimonials Container */}
+          <div className="relative w-full">
             <div
-              className="flex transition-transform ease-out"
+              ref={scrollContainerRef}
+              onScroll={handleScroll}
+              onKeyDown={handleKeyDown}
+              onTouchStart={() => setIsHovered(true)}
+              onTouchEnd={() => setIsHovered(false)}
+              tabIndex={0}
+              role="region"
+              aria-label="Student testimonials carousel"
+              className="testimonials-scroll-container flex items-stretch gap-4 sm:gap-5 lg:gap-6 overflow-x-auto overflow-y-visible py-4 px-1 -mx-1 snap-x snap-mandatory scroll-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40 rounded-2xl"
               style={{
-                transform: `translateX(-${activeGroup * 100}%)`,
-                transitionDuration: prefersReducedMotion ? '0ms' : '500ms',
+                WebkitOverflowScrolling: 'touch',
               }}
             >
-              {DESKTOP_GROUPS.map((group, grpIdx) => (
-                <div key={grpIdx} className="w-full shrink-0">
-                  <div className="grid grid-cols-3 gap-4 lg:gap-6">
-                    {group.map((item, cardIdx) => (
-                      <div
-                        key={item.id}
-                        className={`h-full ${
-                          group.length === 1 ? 'col-start-2' : ''
-                        } transition-all duration-500 ease-out ${
-                          hasRevealed || prefersReducedMotion
-                            ? 'opacity-100 translate-y-0'
-                            : 'opacity-0 translate-y-4'
-                        }`}
-                        style={{
-                          transitionDelay: prefersReducedMotion
-                            ? '0ms'
-                            : `${200 + cardIdx * 100}ms`,
-                        }}
-                      >
-                        <TestimonialCard item={item} isSpotlight={group.length === 1} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* MOBILE VIEW (One Card at a Time with Touch-Swipe & Full Accessibility of all 10 Testimonials) */}
-          <div
-            className="md:hidden overflow-hidden"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className="flex transition-transform ease-out"
-              style={{
-                transform: `translateX(-${mobileIndex * 100}%)`,
-                transitionDuration: prefersReducedMotion ? '0ms' : '450ms',
-              }}
-            >
-              {testimonials.map((item) => (
-                <div key={item.id} className="w-full shrink-0 px-0.5">
-                  <TestimonialCard item={item} />
+              {testimonials.map((item, index) => (
+                <div
+                  key={item.id}
+                  ref={(el) => (cardRefs.current[index] = el)}
+                  className="shrink-0 snap-start flex flex-col w-[85%] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2*1.5rem)/3)] transition-all duration-500 ease-out"
+                  style={{
+                    transitionDelay: prefersReducedMotion ? '0ms' : `${Math.min(index * 60, 300)}ms`,
+                  }}
+                >
+                  <TestimonialCard item={item} isSpotlight={item.id === 10} />
                 </div>
               ))}
             </div>
 
             {/* Mobile Touch Guidance & Direct Micro Dots */}
-            <div className="flex items-center justify-between mt-4 px-1 text-xs text-brand-charcoal-muted font-sans">
+            <div className="flex sm:hidden items-center justify-between mt-4 px-1 text-xs text-brand-charcoal-muted font-sans">
               <span className="text-[11px] text-stone-500">
                 Swipe left / right to navigate
               </span>
-              <div className="flex items-center gap-1" aria-hidden="true">
+              <div className="flex items-center gap-1" role="tablist" aria-label="Testimonial cards">
                 {testimonials.map((_, dotIdx) => (
-                  <span
+                  <button
                     key={dotIdx}
+                    type="button"
+                    onClick={() => {
+                      setMobileIndex(dotIdx);
+                      setActiveGroup(Math.min(3, Math.floor(dotIdx / 3)));
+                      setElapsed(0);
+                      scrollToCard(dotIdx);
+                    }}
+                    aria-label={`Go to testimonial ${dotIdx + 1} of ${totalTestimonials}`}
                     className={`h-1.5 rounded-full transition-all duration-300 ${
                       mobileIndex === dotIdx
                         ? 'w-4 bg-brand-purple'
-                        : 'w-1.5 bg-stone-300'
+                        : 'w-1.5 bg-stone-300 hover:bg-stone-400'
                     }`}
                   />
                 ))}
               </div>
             </div>
           </div>
-
         </div>
-
       </div>
     </section>
   );
